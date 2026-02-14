@@ -5,3 +5,9 @@ export interface Bookmark {
   url: string;
   created_at: string;
 }
+
+export interface Tab {
+  value: string;
+  title: string;
+  content: React.ReactNode;
+}
