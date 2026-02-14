@@ -1,6 +1,6 @@
 # Bookmark App
 
-A modern, real-time bookmark manager built with **Next.js 15 (App Router)**, **Supabase**, and **Tailwind CSS**.
+A modern, real-time bookmark manager built with **Next.js 15**, **Supabase**, and **Tailwind CSS**.
 
 ## Features
 
