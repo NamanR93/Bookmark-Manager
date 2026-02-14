@@ -51,14 +51,11 @@ A modern, real-time bookmark manager built with **Next.js 15 (App Router)**, **S
 * **Challenge:** Multi-tab sessions led to "stale" data where an addition in one tab wouldn't appear in another without a manual refresh.
 * **Solution:** Integrated **Supabase Realtime** subscriptions to listen for `INSERT` and `DELETE` events. This ensures the UI stays synchronized across all active sessions without redundant API polling.
 
-### 2. Multi-Tenant Data Privacy (RLS)
-* **Challenge:** Preventing unauthorized data access. Relying on client-side filtering is insecure if a user intercepts the API call.
-* **Solution:** Enforced **Row Level Security (RLS)** at the PostgreSQL level using `auth.uid() = user_id`. The database itself rejects unauthorized queries, guaranteeing data isolation regardless of frontend logic.
+### 2. Duplicate Prevention in Real-Time Subscriptions
+* **Challenge:** Simultaneous actions in multiple tabs could lead to duplicate rendering of the same bookmark during a race condition.
+* **Solution:** Implemented **client-side deduplication** within the subscription handler. Before processing an `INSERT` event, the app verifies if the ID already exists in the local state: `if (prev.some(b => b.id === newId))`. This ensures a single source of truth across concurrent sessions.
 
-### 3. Latency Compensation (Optimistic UI)
-* **Challenge:** Waiting for database round-trips during CRUD operations made the interface feel sluggish and unresponsive.
-* **Solution:** Adopted **Optimistic UI updates**. The local state updates immediately while the request is in flight. If the server returns an error, the state **rolls back** to its previous snapshot, maintaining a snappy yet consistent user experience.
+### 3. Input Validation & Form UX
+* **Challenge:** Preventing "dirty data" (empty entries or invalid URLs) from polluting the database while maintaining a fast entry flow.
+* **Solution:** Integrated **pre-submission validation** and state resets (`setTitle("")`). I added support for keyboard shortcuts (Enter to submit), ensuring the UI provides immediate visual feedback and prevents accidental duplicate submissions.
 
-### 4. Hydration & Next.js 15 Architecture
-* **Challenge:** Integrating browser-only libraries (Framer Motion, Supabase Client) within the Next.js App Router triggered hydration mismatches.
-* **Solution:** Refactored the component hierarchy to strictly separate **Server Components** (data fetching) from **Client Components** (interactive UI). This minimized the client-side bundle and ensured error-free hydration of animated elements.
