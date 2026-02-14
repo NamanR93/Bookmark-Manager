@@ -45,23 +45,20 @@ A modern, real-time bookmark manager built with **Next.js 15 (App Router)**, **S
 
 5.  Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-## Challenges & Solutions
+## 💡 Challenges & Solutions
 
-### 1. Real-time Synchronization Across Tabs
-**Problem:** Initially, if a user had the app open in two tabs, adding a bookmark in one tab wouldn't reflect in the other without a manual refresh.
-**Solution:** Implemented **Supabase Realtime subscriptions**. By subscribing to `postgres_changes` on the `bookmarks` table, the app listens for `INSERT` and `DELETE` events.
-*   **Key Detail:** We specifically filtered events by `user_id` to ensure users only receive updates for their own data, optimizing performance and security.
+### 1. Real-Time State Synchronization
+* **Challenge:** Multi-tab sessions led to "stale" data where an addition in one tab wouldn't appear in another without a manual refresh.
+* **Solution:** Integrated **Supabase Realtime** subscriptions to listen for `INSERT` and `DELETE` events. This ensures the UI stays synchronized across all active sessions without redundant API polling.
 
-### 2. Ensuring Data Privacy (RLS)
-**Problem:** Without proper restrictions, any authenticated user could potentially query all bookmarks in the database.
-**Solution:** Implemented **Row Level Security (RLS)** policies in PostgreSQL.
-*   **Policy:** `create policy "Users can view own bookmarks" on bookmarks for select using (auth.uid() = user_id);`
-*   This ensures that the database engine itself enforces privacy, regardless of client-side logic.
+### 2. Multi-Tenant Data Privacy (RLS)
+* **Challenge:** Preventing unauthorized data access. Relying on client-side filtering is insecure if a user intercepts the API call.
+* **Solution:** Enforced **Row Level Security (RLS)** at the PostgreSQL level using `auth.uid() = user_id`. The database itself rejects unauthorized queries, guaranteeing data isolation regardless of frontend logic.
 
-### 3. Handling Optimistic UI Updates
-**Problem:** Waiting for the database response before updating the UI made the app feel sluggish.
-**Solution:** Adopted an **Optimistic UI** approach. When a user deletes a bookmark, it is immediately removed from the local state (`bookmarks` array) before the API call completes. If the API call fails, the change is reverted, ensuring a snappy user experience.
+### 3. Latency Compensation (Optimistic UI)
+* **Challenge:** Waiting for database round-trips during CRUD operations made the interface feel sluggish and unresponsive.
+* **Solution:** Adopted **Optimistic UI updates**. The local state updates immediately while the request is in flight. If the server returns an error, the state **rolls back** to its previous snapshot, maintaining a snappy yet consistent user experience.
 
-### 4. Next.js App Router & Client Components
-**Problem:** Integrating browser-only libraries (like `framer-motion` and Supabase client) with Next.js Server Components caused hydration errors.
-**Solution:** Carefully separated logic into Client Components using the `"use client"` directive. We ensured that interactive elements (like the Dashboard and Login form) are Client Components, while keeping the structural layout server-rendered where possible.
+### 4. Hydration & Next.js 15 Architecture
+* **Challenge:** Integrating browser-only libraries (Framer Motion, Supabase Client) within the Next.js App Router triggered hydration mismatches.
+* **Solution:** Refactored the component hierarchy to strictly separate **Server Components** (data fetching) from **Client Components** (interactive UI). This minimized the client-side bundle and ensured error-free hydration of animated elements.
