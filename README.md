@@ -1,7 +1,7 @@
 # Bookmark App
 
 A modern, real-time bookmark manager built with **Next.js 15**, **Supabase**, and **Tailwind CSS**.
-
+- vercel link: https://bookmark-manager-livid-zeta.vercel.app/
 ## Features
 
 - **Authentication**: Secure Google OAuth login via Supabase.
@@ -45,11 +45,11 @@ A modern, real-time bookmark manager built with **Next.js 15**, **Supabase**, an
 
 5.  Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-## 💡 Challenges & Solutions
+##  Challenges & Solutions:
 
 ### 1. Real-Time State Synchronization
 * **Challenge:** Multi-tab sessions led to "stale" data where an addition in one tab wouldn't appear in another without a manual refresh.
-* **Solution:** Integrated **Supabase Realtime** subscriptions to listen for `INSERT` and `DELETE` events. This ensures the UI stays synchronized across all active sessions without redundant API polling.
+* **Solution:** Integrated **Supabase Realtime** subscriptions to listen for `INSERT` and `DELETE` events. This ensures the UI stays synchronized across all active sessions without redundting similar API .
 
 ### 2. Duplicate Prevention in Real-Time Subscriptions
 * **Challenge:** Simultaneous actions in multiple tabs could lead to duplicate rendering of the same bookmark during a race condition.
