@@ -53,9 +53,9 @@ A modern, real-time bookmark manager built with **Next.js 15**, **Supabase**, an
 
 ### 2. Duplicate Prevention in Real-Time Subscriptions
 * **Challenge:** Simultaneous actions in multiple tabs could lead to duplicate rendering of the same bookmark during a race condition.
-* **Solution:** Implemented **client-side deduplication** within the subscription handler. Before processing an `INSERT` event, the app verifies if the ID already exists in the local state: `if (prev.some(b => b.id === newId))`. This ensures a single source of truth across concurrent sessions.
+* **Solution:** Implemented **client-side deduplication** within the subscription handler. Before processing an `INSERT` event, the app verifies if the ID already exists in the local state: `if (prev.some(b => b.id === newId))`. This ensures a single source, across various sessions.
 
 ### 3. Input Validation & Form UX
 * **Challenge:** Preventing "dirty data" (empty entries or invalid URLs) from polluting the database while maintaining a fast entry flow.
-* **Solution:** Integrated **pre-submission validation** and state resets (`setTitle("")`). I added support for keyboard shortcuts (Enter to submit), ensuring the UI provides immediate visual feedback and prevents accidental duplicate submissions.
+* **Solution:** Integrated **pre-submission validation** and state resets (`setTitle("")`). I added support for keyboard shortcuts (Enter to submit), ensuring the UI provides immediate visual feedback and prevents duplicate submissions.
 
